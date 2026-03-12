@@ -41,17 +41,7 @@ function Sidebar({ isOpen, setIsOpen }) {
         const res = await fetch('https://api.equaly.co/api/user/portfolio-summary', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        // For local development
-        const fallbackRes = await fetch('https://api.equaly.co/api/user/portfolio-summary', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).catch(() => res); // try local if prod fails, or just use localhost
-
-        // Let's just use localhost for now to keep it working in our environment
-        const useRes = await fetch('https://api.equaly.co/api/user/portfolio-summary', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        const data = await useRes.json();
+        const data = await res.json();
         if (data.success) {
           setTotalInvested(data.totalInvested);
         }

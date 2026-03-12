@@ -225,7 +225,7 @@ export default function Register() {
                             </div>
                             <h3 className="text-3xl font-bold text-white mb-3">Tu portal a los mercados globales</h3>
                             <p className="text-gray-400 text-sm leading-relaxed">
-                                Accede a más de 150 activos. Invierte en tiempo real con herramientas avanzadas e inteligencia artificial desde cualquier lugar del mundo.
+                                Accede a más de 150 activos. Invierte en tiempo real con herramientas avanzadas desde cualquier lugar del mundo.
                             </p>
                         </div>
                     </div>
