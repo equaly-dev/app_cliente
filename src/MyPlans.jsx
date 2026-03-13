@@ -134,16 +134,13 @@ export default function MyPlans() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-borderC/50 pt-6">
+                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-borderC/50 pt-6">
                                     <div className="flex-1 max-w-sm flex items-center gap-4">
                                         <div className="w-full bg-surfaceDark rounded-full h-1.5 overflow-hidden">
                                             <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(1, (parseFloat(plan.total_earned) / parseFloat(plan.amount_invested)) * 100))}%` }}></div>
                                         </div>
                                         <span className="text-xs text-gray-400 whitespace-nowrap min-w-max">Progreso ROI</span>
                                     </div>
-                                    <button className="bg-accent hover:bg-accentHover text-white px-6 py-2.5 rounded-xl text-sm font-bold transition">
-                                        Gestionar Plan
-                                    </button>
                                 </div>
                             </div>
                         </div>
