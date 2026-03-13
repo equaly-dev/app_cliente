@@ -166,7 +166,14 @@ function Sidebar({ isOpen, setIsOpen }) {
   );
 }
 
-function Topbar({ toggleSidebar }) {
+function Topbar({ toggleSidebar, user }) {
+  const getInitials = (name) => {
+    if (!name) return '??';
+    const parts = name.split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
+
   return (
     <div className="h-20 bg-background flex flex-col justify-center px-4 md:px-10 border-b border-borderC shrink-0">
       <div className="flex justify-between items-center w-full">
@@ -198,11 +205,11 @@ function Topbar({ toggleSidebar }) {
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-sm font-bold text-white leading-none">Pedro Perez</p>
+              <p className="text-sm font-bold text-white leading-none">{user?.name || 'Usuario'}</p>
               <span className="text-[10px] text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded-full font-bold">PLAN BRONCE</span>
             </div>
             <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold border-2 border-borderC">
-              PP
+              {getInitials(user?.name)}
             </div>
           </div>
         </div>
@@ -467,6 +474,7 @@ function DashboardHome() {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  const [user, setUser] = React.useState(null);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const location = useLocation();
 
@@ -500,7 +508,19 @@ export default function App() {
       window.location.href = '/login';
     } else {
       setIsAuthenticated(true);
-      setLoading(false);
+      // Fetch user profile
+      fetch('https://api.equaly.co/api/user/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) setUser(data.user);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error fetching profile", err);
+          setLoading(false);
+        });
     }
   }, [location.pathname, isAuthRoute]);
 
@@ -529,7 +549,7 @@ export default function App() {
     <div className="h-screen w-full bg-background flex overflow-hidden font-sans relative">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className="flex-1 flex flex-col min-w-0 md:ml-0">
-        <Topbar toggleSidebar={() => setSidebarOpen(true)} />
+        <Topbar toggleSidebar={() => setSidebarOpen(true)} user={user} />
         <Routes>
           <Route path="/" element={<DashboardHome />} />
           <Route path="/plans" element={<MyPlans />} />
