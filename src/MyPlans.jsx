@@ -42,7 +42,7 @@ export default function MyPlans() {
 
     const getPlanName = (name) => {
         const n = String(name).toLowerCase();
-        if (n.includes('oro')) return 'Oro Élite';
+        if (n.includes('oro')) return 'Oro';
         if (n.includes('plata')) return 'Plata';
         if (n.includes('bronce')) return 'Bronce';
         return name;
@@ -88,7 +88,9 @@ export default function MyPlans() {
                 const isSilver = String(plan.plan_name).toLowerCase().includes('plata');
 
                 const planTitle = getPlanName(plan.plan_name);
-                const roi = parseFloat(plan.daily_percentage).toFixed(2);
+                // Show 4 decimals if it's a long number, else 2
+                const roiValue = parseFloat(plan.daily_percentage);
+                const roi = roiValue > 0 && roiValue < 1 ? roiValue.toFixed(4) : roiValue.toFixed(2);
                 const days = calculateDaysActive(plan.purchase_date);
                 const startDateStr = new Date(plan.purchase_date).toLocaleDateString('es-ES');
 
