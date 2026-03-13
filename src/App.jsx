@@ -514,7 +514,7 @@ export default function App() {
       })
         .then(res => res.json())
         .then(data => {
-          if (data.user) setUser(data.user);
+          if (data.profile) setUser(data.profile);
           setLoading(false);
         })
         .catch(err => {
