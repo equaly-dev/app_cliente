@@ -10,8 +10,10 @@ export default function MyPlans() {
     useEffect(() => {
         const fetchPlans = async () => {
             try {
-                // In production, configure to hit correct API base URL
-                const response = await fetch('https://api.equaly.co/api/user/plans');
+                const token = localStorage.getItem('equaly_token');
+                const response = await fetch('https://api.equaly.co/api/user/plans', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 if (!response.ok) {
                     throw new Error('No se pudo cargar la información de los planes');
                 }

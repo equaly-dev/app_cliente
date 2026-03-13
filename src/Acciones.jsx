@@ -3,6 +3,52 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, StarIcon } from '@heroicons/react/24/solid';
 
 export default function Acciones() {
+    const [amount, setAmount] = React.useState(10);
+    const [loading, setLoading] = React.useState(false);
+
+    const handleTrade = async () => {
+        if (!amount || amount <= 0) {
+            alert("Por favor ingrese una cantidad válida.");
+            return;
+        }
+
+        const token = localStorage.getItem('equaly_token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Calculamos el total basado en el precio de AAPL (estático para este ejemplo de UI)
+            const pricePerShare = 189.43;
+            const totalToPay = amount * pricePerShare;
+
+            const response = await fetch('https://api.equaly.co/api/payments/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    planId: 'AAPL', // Identificamos que es una acción
+                    amount: totalToPay 
+                })
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Error al iniciar el pago: " + (data.error || "Desconocido"));
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error("Error en trade:", err);
+            alert("Error de conexión con el servidor.");
+            setLoading(false);
+        }
+    };
     const chartData = [
         { time: '09:30', price: 185.5 },
         { time: '10:00', price: 186.2 },
@@ -129,7 +175,12 @@ export default function Acciones() {
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Cantidad</label>
                                 <div className="relative">
-                                    <input type="number" defaultValue="10" className="w-full bg-background border border-borderC rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-accent" />
+                                    <input 
+                                        type="number" 
+                                        value={amount} 
+                                        onChange={(e) => setAmount(Number(e.target.value))}
+                                        className="w-full bg-background border border-borderC rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-accent" 
+                                    />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-bold">Acciones</span>
                                 </div>
                             </div>
@@ -137,11 +188,16 @@ export default function Acciones() {
 
                         <div className="flex justify-between items-center mb-6 pt-4 border-t border-borderC">
                             <span className="text-gray-400 text-sm">Total Estimado</span>
-                            <span className="text-xl font-bold text-white">$1,894.30</span>
+                            <span className="text-xl font-bold text-white">${(amount * 189.43).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                         </div>
 
-                        <button className="w-full bg-accent hover:bg-accentHover text-white py-3.5 rounded-xl font-bold shadow-lg shadow-accent/30 transition-colors mb-4">
-                            Ejecutar Compra
+                        <button 
+                            onClick={handleTrade}
+                            disabled={loading}
+                            className={`w-full ${loading ? 'bg-gray-600' : 'bg-accent hover:bg-accentHover'} text-white py-3.5 rounded-xl font-bold shadow-lg shadow-accent/30 transition-colors mb-4 flex justify-center items-center gap-2`}
+                        >
+                            {loading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
+                            {loading ? 'Procesando...' : 'Ejecutar Compra'}
                         </button>
 
                         <p className="text-center text-xs text-gray-500">Poder de compra: <span className="font-bold text-white">$12,450.80</span></p>
